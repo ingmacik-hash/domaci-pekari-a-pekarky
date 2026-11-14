@@ -11,6 +11,18 @@
 
   let query = "";
 
+  // Odkaz na text licencie fotky, napr. "CC BY-SA 4.0" -> creativecommons.org/licenses/by-sa/4.0/
+  function licenseUrl(license) {
+    const m = /^CC (BY(?:-SA)?) (\d\.\d)$/.exec(license || "");
+    if (m) return `https://creativecommons.org/licenses/${m[1].toLowerCase()}/${m[2]}/deed.sk`;
+    if (license === "CC0") return "https://creativecommons.org/publicdomain/zero/1.0/deed.sk";
+    return ""; // voľné dielo (public domain) nemá text licencie
+  }
+  function licenseHtml(license) {
+    const url = licenseUrl(license);
+    return url ? `<a href="${url}" target="_blank" rel="noopener license">${esc(license)}</a>` : esc(license);
+  }
+
   // --- obľúbené (localStorage) ---
   function loadFavs() {
     try {
@@ -250,7 +262,7 @@
 
         <figure class="recipe-figure">
           ${media(r, "recipe-img")}
-          ${r.credit ? `<figcaption>Foto: <a href="${esc(r.credit.url)}" target="_blank" rel="noopener">${esc(r.credit.author)}</a>, ${esc(r.credit.license)}, Wikimedia Commons</figcaption>` : ""}
+          ${r.credit ? `<figcaption>Foto: <a href="${esc(r.credit.url)}" target="_blank" rel="noopener">${esc(r.credit.author)}</a>, licencia ${licenseHtml(r.credit.license)}, zdroj Wikimedia Commons</figcaption>` : ""}
         </figure>
 
         <div class="facts">

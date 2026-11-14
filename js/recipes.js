@@ -1092,7 +1092,7 @@ const RECIPES = [
   {
     id: "pampusky",
     image: "img/pampusky.jpg",
-    credit: { author: "Brücke-Osteuropa", license: "Public domain", url: "https://commons.wikimedia.org/wiki/File:Ukrainian_Borsch_with_Pampushky_in_Zaporizhia.JPG" },
+    credit: { author: "Brücke-Osteuropa", license: "voľné dielo", url: "https://commons.wikimedia.org/wiki/File:Ukrainian_Borsch_with_Pampushky_in_Zaporizhia.JPG" },
     title: "Ukrajinské pampušky s cesnakom",
     category: "Pečivo",
     emoji: "🧄",
@@ -1127,7 +1127,7 @@ const RECIPES = [
   {
     id: "lussekatter",
     image: "img/lussekatter.jpg",
-    credit: { author: "Jonas Bergsten", license: "Public domain", url: "https://commons.wikimedia.org/wiki/File:Saffron_bun_20051213_001.jpg" },
+    credit: { author: "Jonas Bergsten", license: "voľné dielo", url: "https://commons.wikimedia.org/wiki/File:Saffron_bun_20051213_001.jpg" },
     title: "Švédske šafránové lussekatter",
     category: "Sladké pečivo",
     emoji: "🕯️",
