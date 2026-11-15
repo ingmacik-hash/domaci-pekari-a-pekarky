@@ -257,6 +257,7 @@
           <div class="actions">
             ${favButton(r.id, true)}
             <button class="btn-outline" data-print>🖨 Vytlačiť recept</button>
+            ${"wakeLock" in navigator ? `<button class="btn-outline" data-wake aria-pressed="false">🔆 Nezhasínať obrazovku</button>` : ""}
           </div>
         </header>
 
@@ -341,8 +342,56 @@
       ${link("videorecepty", "▶ Videorecepty")}`;
   }
 
+  // --- mobil: menu v hlavičke ---
+  const headerEl = document.querySelector(".site-header");
+  const menuBtn = document.getElementById("menu-btn");
+  function setMenu(open) {
+    headerEl.classList.toggle("menu-open", open);
+    menuBtn.setAttribute("aria-expanded", open);
+    menuBtn.textContent = open ? "✕" : "☰";
+  }
+
+  // --- nezhasínať obrazovku pri pečení (Wake Lock, hlavne na mobile) ---
+  let wakeLock = null;
+  async function setWake(on) {
+    try {
+      if (on) {
+        wakeLock = await navigator.wakeLock.request("screen");
+        wakeLock.addEventListener("release", () => { wakeLock = null; updateWakeBtn(); });
+        toast("Obrazovka nezhasne, kým máš otvorený tento recept.");
+      } else if (wakeLock) {
+        await wakeLock.release();
+      }
+    } catch (e) {
+      toast("Tento prehliadač nedovolil nechať obrazovku zapnutú.");
+    }
+    updateWakeBtn();
+  }
+  function updateWakeBtn() {
+    const b = document.querySelector("[data-wake]");
+    if (!b) return;
+    b.setAttribute("aria-pressed", !!wakeLock);
+    b.textContent = wakeLock ? "🔆 Obrazovka nezhasne ✓" : "🔆 Nezhasínať obrazovku";
+  }
+
+  // --- prepínač mobilná / počítačová verzia ---
+  const VIEW_KEY = "pekari-zobrazenie";
+  function renderViewSwitch() {
+    let desktop = false;
+    try { desktop = localStorage.getItem(VIEW_KEY) === "pocitac"; } catch (e) { return; }
+    const el = document.getElementById("view-switch");
+    // Ponuka sa zobrazí len na menších zariadeniach (alebo keď je počítačová verzia zapnutá).
+    if (!desktop && Math.min(screen.width, screen.height) > 820) return;
+    el.hidden = false;
+    el.innerHTML = desktop
+      ? `<button class="link-btn" data-view="mobil">📱 Zobraziť mobilnú verziu</button>`
+      : `<button class="link-btn" data-view="pocitac">🖥 Zobraziť počítačovú verziu</button>`;
+  }
+
   function route() {
     const hash = location.hash.replace(/^#\/?/, "");
+    setMenu(false);
+    if (wakeLock) wakeLock.release();
     renderNav(hash);
     if (hash.startsWith("recept/")) renderRecipe(hash.slice(7));
     else if (hash.startsWith("kategoria/")) {
@@ -373,6 +422,14 @@
       return toast("Pripravujeme – registrácia, pridávanie receptov a komentáre budú čoskoro.");
     }
     if (e.target.closest("[data-print]")) return window.print();
+    if (e.target.closest("[data-wake]")) return setWake(!wakeLock);
+    const view = e.target.closest("[data-view]");
+    if (view) {
+      try { localStorage.setItem(VIEW_KEY, view.dataset.view); } catch (err) { /* nič */ }
+      return location.reload();
+    }
+    if (e.target.closest("#menu-btn")) return setMenu(!headerEl.classList.contains("menu-open"));
+    if (!e.target.closest("#header-menu")) setMenu(false);
 
     const dd = document.querySelector(".nav-dd");
     if (e.target.closest(".nav-dd-btn")) {
@@ -407,6 +464,9 @@
     .map((c) => `<a href="#/kategoria/${slug(c)}">${esc(c)}</a>`).join("");
   document.getElementById("year").textContent = new Date().getFullYear();
   window.addEventListener("hashchange", route);
+  // Po návrate do prehliadača (napr. z inej aplikácie) prehliadač zámok obrazovky uvoľní.
+  document.addEventListener("visibilitychange", () => updateWakeBtn());
+  renderViewSwitch();
   updateFavCount();
   route();
 })();

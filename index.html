@@ -2,7 +2,15 @@
 <html lang="sk">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#c8642a">
+  <script>
+    // Prepínač „počítačová verzia“ na mobile: stránka sa vykreslí v šírke 1200 px ako na počítači.
+    try {
+      if (localStorage.getItem("pekari-zobrazenie") === "pocitac")
+        document.querySelector('meta[name="viewport"]').setAttribute("content", "width=1200");
+    } catch (e) { /* bez úložiska ostane mobilná verzia */ }
+  </script>
   <title>Domáci pekári a pekárky – receptár</title>
   <meta name="description" content="Receptár domácich pekárov a pekárok: chlieb, pečivo, koláče a kvások.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,12 +30,15 @@
       </div>
       <div class="header-actions">
         <a href="#/oblubene" class="fav-link" title="Obľúbené recepty">♥ <span id="fav-count" class="badge">0</span></a>
-        <span class="account-links">
-          <button class="link-btn" data-soon>Prihlásiť sa</button>
-          <span class="sep">·</span>
-          <button class="link-btn" data-soon>Registrácia</button>
-        </span>
-        <button class="btn btn-small" data-soon>+ Pridať recept</button>
+        <div class="header-menu" id="header-menu">
+          <span class="account-links">
+            <button class="link-btn" data-soon>Prihlásiť sa</button>
+            <span class="sep">·</span>
+            <button class="link-btn" data-soon>Registrácia</button>
+          </span>
+          <button class="btn btn-small" data-soon>+ Pridať recept</button>
+        </div>
+        <button class="menu-btn" id="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="header-menu">☰</button>
       </div>
     </div>
     <nav class="container main-nav" id="main-nav" aria-label="Kategórie"></nav>
@@ -62,6 +73,7 @@
       </div>
     </div>
     <p class="container copyright">© <span id="year"></span> Domáci pekári a pekárky · Fotografie: Wikimedia Commons (autori pri receptoch)</p>
+    <p class="container view-switch" id="view-switch" hidden></p>
   </footer>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>

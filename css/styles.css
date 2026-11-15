@@ -80,6 +80,8 @@ button { font: inherit; }
 }
 #search:focus { outline: 2px solid var(--accent); outline-offset: 1px; background-color: var(--surface); }
 .header-actions { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+.header-menu { display: flex; align-items: center; gap: 14px; }
+.menu-btn { display: none; }
 .fav-link { text-decoration: none; color: var(--accent); font-weight: 600; white-space: nowrap; }
 .badge {
   display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 10px;
@@ -264,6 +266,8 @@ button { font: inherit; }
 .footer-inner a { display: block; color: var(--text); text-decoration: none; padding: 3px 0; }
 .footer-inner a:hover { color: var(--accent); }
 .copyright { color: var(--muted); font-size: 0.8rem; border-top: 1px solid var(--border); padding-top: 16px; margin-top: 24px; }
+.view-switch { text-align: center; margin: 8px auto 0; }
+.view-switch .link-btn { color: var(--accent); padding: 10px; }
 
 .toast {
   position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none;
@@ -280,19 +284,96 @@ button { font: inherit; }
   .footer-inner > div:first-child { grid-column: 1 / -1; }
 }
 
+/* ===== Mobil (telefóny). Počítačová verzia vyššie ostáva bez zmeny. ===== */
 @media (max-width: 640px) {
-  .header-top { flex-wrap: wrap; height: auto; padding-top: 12px; padding-bottom: 10px; gap: 10px; }
+  /* hlavička: kompaktná, neprilepená, aby nezaberala polovicu displeja */
+  .site-header { position: relative; padding-top: env(safe-area-inset-top); }
+  /* mriežka: 1. riadok logo + ikony, 2. riadok vyhľadávanie (nikdy sa nezalomí inak) */
+  .header-top {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; height: auto;
+    padding-top: 10px; padding-bottom: 10px; gap: 10px 8px;
+  }
+  .logo { font-size: 1.12rem; gap: 8px; min-width: 0; }
+  .logo-text { overflow: hidden; text-overflow: ellipsis; }
+  .logo-mark { width: 34px; height: 34px; font-size: 1.1rem; }
   .logo-text em { display: none; }
-  .account-links .link-btn { font-size: 0.85rem; padding: 6px 2px; }
-  .header-actions .btn-small { display: none; }
-  .footer-inner { grid-template-columns: 1fr 1fr; }
-  .search-box { order: 3; flex-basis: 100%; max-width: none; }
-  .feature { min-height: 340px; }
+  .header-actions { gap: 6px; }
+  .fav-link { padding: 8px 6px; }
+  .menu-btn {
+    display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--border);
+    border-radius: 12px; background: var(--surface); color: var(--text); font-size: 1.3rem; cursor: pointer;
+  }
+  /* rozbaľovacie menu: prihlásenie, registrácia, pridať recept */
+  .header-menu {
+    display: none; position: absolute; top: 100%; left: 0; right: 0; z-index: 40;
+    flex-direction: column; align-items: stretch; gap: 8px; padding: 12px 16px 16px;
+    background: var(--surface); border-bottom: 1px solid var(--border); box-shadow: var(--shadow);
+  }
+  .site-header.menu-open .header-menu { display: flex; }
+  .header-menu .account-links { justify-content: center; }
+  .header-menu .link-btn { padding: 12px 10px; font-size: 1rem; }
+  .header-menu .btn-small { padding: 13px 16px; font-size: 1rem; text-align: center; }
+  .search-box { order: 3; grid-column: 1 / -1; max-width: none; }
+  #search { font-size: 16px; padding-top: 12px; padding-bottom: 12px; } /* 16 px: iPhone pri písaní nezväčšuje stránku */
+
+  /* horné menu: väčšie ciele na prst, Kategórie cez celú šírku */
+  .main-nav { position: relative; justify-content: space-between; gap: 2px; padding-bottom: 8px; }
+  .main-nav > a, .nav-dd-btn { padding: 10px 8px; font-size: 0.86rem; }
+  .nav-dd { position: static; }
+  .nav-dd-menu {
+    left: 16px; right: 16px; top: 100%; min-width: 0; max-height: 70vh; overflow-y: auto;
+    grid-template-columns: 1fr 1fr; gap: 2px;
+  }
+  .nav-dd.open .nav-dd-menu { display: grid; }
+  .nav-dd-menu a { padding: 12px 10px; white-space: normal; font-size: 0.92rem; }
+
+  /* úvod */
+  .top { margin-top: 16px; gap: 20px; }
+  .feature { min-height: 300px; }
   .feature-text { padding: 20px; }
-  .facts { grid-template-columns: 1fr 1fr; }
+  .feature-text p { font-size: 0.95rem; }
+  .section { margin: 36px 0; }
+  .section-head h2 { font-size: 1.3rem; }
+  .cat-tiles { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .cat-tile { padding: 14px 4px; }
+  .cat-icon { font-size: 1.8rem; }
+  .cat-tile strong { font-size: 0.8rem; line-height: 1.25; }
+  .cat-tile small { font-size: 0.72rem; }
+  .grid { grid-template-columns: 1fr; gap: 16px; }
+  .fav-btn { width: 42px; height: 42px; }
+  .cta { margin: 40px 0; padding: 26px 20px; }
+
+  /* reklama: mobilný banner namiesto širokého */
+  .ad-leaderboard { min-height: 100px; max-width: 320px; margin: 24px auto; }
+
+  /* detail receptu */
+  .crumbs { margin-top: 16px; }
+  .lead { font-size: 1rem; }
+  .actions .btn-outline, .actions .fav-btn.big { flex: 1 1 auto; padding: 12px 14px; }
+  .recipe-img { aspect-ratio: 4 / 3; border-radius: 10px; }
+  .facts { grid-template-columns: 1fr 1fr; margin-bottom: 24px; }
   .facts div:nth-child(2) { border-right: none; }
   .facts div:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
-  .cta { padding: 28px 22px; }
+  .recipe-body { gap: 28px; }
+  .ingredients { padding: 18px 16px; }
+  .servings button { width: 40px; height: 40px; font-size: 1.2rem; }
+  .ingredients li { padding: 0; }
+  .ingredients label { display: flex; align-items: flex-start; gap: 10px; padding: 11px 0; }
+  .ingredients input { width: 20px; height: 20px; margin: 1px 0 0; flex: none; }
+  .steps li { padding-left: 46px; font-size: 1.02rem; line-height: 1.6; }
+  .comment-box { padding: 20px 16px; }
+
+  /* päta */
+  .site-footer { margin-top: 40px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
+  .footer-inner { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .footer-inner a { padding: 7px 0; }
+  .toast { bottom: calc(16px + env(safe-area-inset-bottom)); }
+}
+
+/* na dotykových zariadeniach nepoužívať „nadskakovanie“ kariet pri prejdení myšou */
+@media (hover: none) {
+  .card:hover, .cat-tile:hover { transform: none; }
+  .feature:hover .feature-img img { transform: none; }
 }
 
 @media print {
