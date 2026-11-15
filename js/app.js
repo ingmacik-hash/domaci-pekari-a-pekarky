@@ -388,6 +388,47 @@
       : `<button class="link-btn" data-view="pocitac">🖥 Zobraziť počítačovú verziu</button>`;
   }
 
+  // --- aplikácia (PWA): inštalácia na plochu a fungovanie bez internetu ---
+  const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  let installPrompt = null;
+  function renderInstall() {
+    const footer = document.getElementById("install-app");
+    const btns = document.querySelectorAll("[data-install]");
+    if (standalone) { footer.hidden = true; return; }
+    if (installPrompt) {
+      btns.forEach((b) => (b.hidden = false));
+      footer.hidden = false;
+      footer.innerHTML = `<button class="link-btn" data-install>📲 Nainštalovať aplikáciu na plochu</button>`;
+    } else if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+      // iPhone nemá tlačidlo inštalácie, len návod
+      footer.hidden = false;
+      footer.innerHTML = `📲 Aplikácia na plochu: ťukni na <strong>Zdieľať</strong> <span aria-hidden="true">⎙</span> a zvoľ <strong>Pridať na plochu</strong>.`;
+    }
+  }
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    installPrompt = e;
+    renderInstall();
+  });
+  window.addEventListener("appinstalled", () => {
+    installPrompt = null;
+    document.querySelectorAll("[data-install]").forEach((b) => (b.hidden = true));
+    document.getElementById("install-app").hidden = true;
+    toast("Aplikácia je nainštalovaná – nájdeš ju na ploche.");
+  });
+  async function install() {
+    if (!installPrompt) return;
+    setMenu(false);
+    installPrompt.prompt();
+    await installPrompt.userChoice;
+    installPrompt = null;
+    document.querySelectorAll("[data-install]").forEach((b) => (b.hidden = true));
+  }
+  // Service worker beží len na https (GitHub Pages) alebo localhost, nie pri otvorení súboru z disku.
+  if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+    window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  }
+
   function route() {
     const hash = location.hash.replace(/^#\/?/, "");
     setMenu(false);
@@ -423,6 +464,7 @@
     }
     if (e.target.closest("[data-print]")) return window.print();
     if (e.target.closest("[data-wake]")) return setWake(!wakeLock);
+    if (e.target.closest("[data-install]")) return install();
     const view = e.target.closest("[data-view]");
     if (view) {
       try { localStorage.setItem(VIEW_KEY, view.dataset.view); } catch (err) { /* nič */ }
@@ -467,6 +509,10 @@
   // Po návrate do prehliadača (napr. z inej aplikácie) prehliadač zámok obrazovky uvoľní.
   document.addEventListener("visibilitychange", () => updateWakeBtn());
   renderViewSwitch();
+  renderInstall();
+  // V nainštalovanej aplikácii nemá prepínač počítačovej verzie zmysel.
+  if (standalone) document.getElementById("view-switch").hidden = true;
+  window.addEventListener("offline", () => toast("Si offline – recepty, ktoré si už otvoril, sa dajú čítať aj bez internetu."));
   updateFavCount();
   route();
 })();

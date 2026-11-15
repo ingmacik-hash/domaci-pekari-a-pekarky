@@ -82,6 +82,7 @@ button { font: inherit; }
 .header-actions { display: flex; align-items: center; gap: 14px; margin-left: auto; }
 .header-menu { display: flex; align-items: center; gap: 14px; }
 .menu-btn { display: none; }
+.header-menu .install-btn { display: none; } /* na počítači je inštalácia len v päte */
 .fav-link { text-decoration: none; color: var(--accent); font-weight: 600; white-space: nowrap; }
 .badge {
   display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 10px;
@@ -314,6 +315,7 @@ button { font: inherit; }
   .header-menu .account-links { justify-content: center; }
   .header-menu .link-btn { padding: 12px 10px; font-size: 1rem; }
   .header-menu .btn-small { padding: 13px 16px; font-size: 1rem; text-align: center; }
+  .header-menu .install-btn:not([hidden]) { display: block; padding: 12px 16px; font-size: 1rem; }
   .search-box { order: 3; grid-column: 1 / -1; max-width: none; }
   #search { font-size: 16px; padding-top: 12px; padding-bottom: 12px; } /* 16 px: iPhone pri písaní nezväčšuje stránku */
 
