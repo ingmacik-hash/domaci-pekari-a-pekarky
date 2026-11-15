@@ -150,7 +150,8 @@
   function renderHome() {
     if (query.trim()) return renderSearch();
     const [f, ...rest] = RECIPES; // prvý recept = recept týždňa
-    const quick = [...RECIPES].sort((a, b) => a.time - b.time).slice(0, 5);
+    // najnovšie = naposledy pridané (na konci zoznamu v recipes.js)
+    const newest = RECIPES.slice(-5).reverse();
     const videos = RECIPES.filter((r) => r.video);
 
     app.innerHTML = `
@@ -166,9 +167,9 @@
         </a>
         <div class="side-col">
           <aside class="side-list">
-            <h2>Najrýchlejšie recepty</h2>
+            <h2>Najnovšie recepty</h2>
             <ol>
-              ${quick.map((r) => `
+              ${newest.map((r) => `
                 <li><a href="#/recept/${r.id}">
                   ${media(r, "thumb")}
                   <span><strong>${esc(r.title)}</strong><small>⏱ ${formatTime(r.time)}</small></span>
@@ -194,7 +195,7 @@
       </section>
 
       <section class="section">
-        <div class="section-head"><h2>Najnovšie recepty</h2><a href="#/recepty">Ďalšie recepty ›</a></div>
+        <div class="section-head"><h2>Obľúbené recepty</h2><a href="#/recepty">Ďalšie recepty ›</a></div>
         ${grid(rest, "")}
       </section>
 
