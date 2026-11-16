@@ -47,3 +47,16 @@ Licencie CC BY a CC BY-SA vyžadujú uviesť autora, licenciu a zdroj, čo robí
 ## Texty receptov
 
 Popisy a postupy receptov sú napísané vlastnými slovami. Zahraničné a slovenské recepty slúžili len ako inšpirácia a na overenie postupov.
+## Písma a knižnice
+
+| Súbor | Názov | Licencia | Zdroj |
+|---|---|---|---|
+| `fonts/inter-*.woff2` | Inter (Rasmus Andersson) | [SIL Open Font License 1.1](https://openfontlicense.org) | [rsms.me/inter](https://rsms.me/inter/) |
+| `fonts/outfit-*.woff2` | Outfit (On Brand Investments) | [SIL Open Font License 1.1](https://openfontlicense.org) | [github.com/Outfitio/Outfit-Fonts](https://github.com/Outfitio/Outfit-Fonts) |
+| `js/vendor/supabase.min.js` | supabase-js 2.45.4 | [MIT](https://github.com/supabase/supabase-js/blob/master/LICENSE) | [github.com/supabase/supabase-js](https://github.com/supabase/supabase-js) |
+
+Písma a knižnica sú uložené priamo na webe, takže sa pri návšteve nenačítavajú zo serverov tretích strán.
+
+## Fotky receptov od používateľov
+
+Fotky pri receptoch pridaných používateľmi patria ich autorom a na webe sú zverejnené podľa [Pravidiel komunity](index.html#/pravidla).

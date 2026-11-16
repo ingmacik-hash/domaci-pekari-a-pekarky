@@ -20,9 +20,9 @@
   </script>
   <title>Domáci pekári a pekárky – receptár</title>
   <meta name="description" content="Receptár domácich pekárov a pekárok: chlieb, pečivo, koláče a kvások.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -38,12 +38,12 @@
       <div class="header-actions">
         <a href="#/oblubene" class="fav-link" title="Obľúbené recepty">♥ <span id="fav-count" class="badge">0</span></a>
         <div class="header-menu" id="header-menu">
-          <span class="account-links">
-            <button class="link-btn" data-soon>Prihlásiť sa</button>
+          <span class="account-links" id="account-links">
+            <a class="link-btn" href="#/prihlasenie">Prihlásiť sa</a>
             <span class="sep">·</span>
-            <button class="link-btn" data-soon>Registrácia</button>
+            <a class="link-btn" href="#/registracia">Registrácia</a>
           </span>
-          <button class="btn btn-small" data-soon>+ Pridať recept</button>
+          <a class="btn btn-small" href="#/pridat">+ Pridať recept</a>
           <button class="btn-outline install-btn" data-install hidden>📲 Nainštalovať aplikáciu</button>
         </div>
         <button class="menu-btn" id="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="header-menu">☰</button>
@@ -66,27 +66,32 @@
       </div>
       <div>
         <h4>Komunita</h4>
-        <a href="#" data-soon>Pridať recept</a>
+        <a href="#/pridat">Pridať recept</a>
         <a href="#/videorecepty">Videorecepty</a>
         <a href="#/oblubene">Moje obľúbené</a>
+        <a href="#/ucet">Môj účet</a>
       </div>
       <div>
         <h4>Informácie</h4>
         <a href="#" data-soon>Kontakt</a>
-        <a href="#" data-soon>Pravidlá</a>
+        <a href="#/pravidla">Pravidlá komunity</a>
         <a href="#" data-soon>Reklama</a>
-        <a href="#" data-soon>GDPR</a>
-        <a href="#" data-soon>Nastavenie súkromia</a>
-        <a href="#" data-soon>Použitie cookies</a>
+        <a href="#/ochrana-osobnych-udajov">Ochrana osobných údajov (GDPR)</a>
+        <a href="#/ucet">Nastavenie súkromia</a>
+        <a href="#/cookies">Používanie cookies</a>
       </div>
     </div>
-    <p class="container copyright">© <span id="year"></span> Domáci pekári a pekárky · Fotografie: Wikimedia Commons (autori pri receptoch)</p>
+    <p class="container copyright">© <span id="year"></span> Domáci pekári a pekárky · Fotografie: Wikimedia Commons a autori receptov (uvedení pri receptoch)</p>
     <p class="container view-switch" id="view-switch" hidden></p>
     <p class="container view-switch" id="install-app" hidden></p>
   </footer>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
+  <script src="js/supabase-config.js"></script>
+  <script src="js/vendor/supabase.min.js"></script>
+  <script src="js/backend.js"></script>
+  <script src="js/pravne.js"></script>
   <script src="js/recipes.js"></script>
   <script src="js/app.js"></script>
 </body>

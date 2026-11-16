@@ -5,11 +5,21 @@
 //    Vďaka tomu sa zmeny na webe prejavia hneď a netreba meniť verziu pri každej úprave.
 //  - fotky a písma: najprv z pamäte (rýchle, šetrí dáta), uložia sa pri prvom zobrazení.
 // Verziu CACHE zmeň len vtedy, keď treba vymazať všetko uložené (napr. po premenovaní súborov).
-const CACHE = "pekari-v1";
+// Prihlásenie a databáza (Supabase) idú vždy priamo na internet – nikdy sa neukladajú.
+const CACHE = "pekari-v2";
 const CORE = [
   "./",
   "index.html",
+  "css/fonts.css",
   "css/styles.css",
+  "fonts/inter-latin.woff2",
+  "fonts/inter-latin-ext.woff2",
+  "fonts/outfit-latin.woff2",
+  "fonts/outfit-latin-ext.woff2",
+  "js/supabase-config.js",
+  "js/vendor/supabase.min.js",
+  "js/backend.js",
+  "js/pravne.js",
   "js/recipes.js",
   "js/app.js",
   "manifest.webmanifest",

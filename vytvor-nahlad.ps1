@@ -1,18 +1,41 @@
-# Vytvorí jeden samostatný súbor domaci-pekari-nahlad.html (štýly, skripty aj fotky vnútri)
-# a otvorí ho v Chrome. Spustenie: pravý klik na súbor -> "Run with PowerShell".
+# Vytvori jeden samostatny subor domaci-pekari-nahlad.html (styly, skripty, pisma aj fotky vnutri)
+# a otvori ho v Chrome. Spustenie: pravy klik na subor -> "Run with PowerShell".
+# Nahlad je bez prihlasovania (prihlasenie cez Google funguje len na webe, nie zo suboru).
 $root = $PSScriptRoot
 $utf8 = New-Object Text.UTF8Encoding $false
-$html = [IO.File]::ReadAllText("$root\index.html", $utf8)
-$css = [IO.File]::ReadAllText("$root\css\styles.css", $utf8)
-$recipes = [IO.File]::ReadAllText("$root\js\recipes.js", $utf8)
-$app = [IO.File]::ReadAllText("$root\js\app.js", $utf8)
+function Read-Text($rel) { [IO.File]::ReadAllText((Join-Path $root $rel), $utf8) }
+
+$html = Read-Text "index.html"
+
+# fotky receptov -> data URI
+$recipes = Read-Text "js\recipes.js"
 $recipes = [regex]::Replace($recipes, 'image: "(img/[^"]+)"', {
   param($m)
-  'image: "data:image/jpeg;base64,' + [Convert]::ToBase64String([IO.File]::ReadAllBytes("$root\" + $m.Groups[1].Value)) + '"'
+  'image: "data:image/jpeg;base64,' + [Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $root $m.Groups[1].Value))) + '"'
 })
-$html = $html.Replace('<link rel="stylesheet" href="css/styles.css">', "<style>`n$css`n</style>")
-$html = $html.Replace('<script src="js/recipes.js"></script>', "<script>`n$recipes`n</script>")
-$html = $html.Replace('<script src="js/app.js"></script>', "<script>`n$app`n</script>")
-$out = "$root\domaci-pekari-nahlad.html"
+
+# pisma -> data URI v CSS
+$fonts = Read-Text "css\fonts.css"
+$fonts = [regex]::Replace($fonts, 'url\("\.\./(fonts/[^"]+)"\)', {
+  param($m)
+  'url("data:font/woff2;base64,' + [Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $root $m.Groups[1].Value))) + '")'
+})
+
+# styly
+$html = $html.Replace('<link rel="stylesheet" href="css/fonts.css">', "<style>`n$fonts`n</style>")
+$html = $html.Replace('<link rel="stylesheet" href="css/styles.css">', "<style>`n" + (Read-Text "css\styles.css") + "`n</style>")
+$html = [regex]::Replace($html, '\s*<link rel="preload"[^>]*>', '')
+
+# skripty (vsetky <script src="js/...">)
+$html = [regex]::Replace($html, '<script src="(js/[^"]+)"></script>', {
+  param($m)
+  $rel = $m.Groups[1].Value
+  if ($rel -eq "js/vendor/supabase.min.js") { return "" }  # v nahlade netreba (je bez prihlasovania)
+  if ($rel -eq "js/recipes.js") { $code = $recipes } else { $code = Read-Text $rel }
+  if ($rel -eq "js/supabase-config.js") { $code = "window.PEKARI_CONFIG = {};" }  # nahlad je vzdy bez prihlasovania
+  "<script>`n" + $code.Replace("</script", "<\/script") + "`n</script>"
+})
+
+$out = Join-Path $root "domaci-pekari-nahlad.html"
 [IO.File]::WriteAllText($out, $html, $utf8)
 Start-Process "$env:ProgramFiles\Google\Chrome\Application\chrome.exe" "`"$out`""
